@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='script/script.js')}}">
+        </script>
+    <title>Candidate Login Page</title>
+</head>
+<body>
+
+<div class="container flex">
+  <div class="facebook-page flex">
+    <div class="text">
+        <h1><u>Login</u></h1>
+      <p>Enter your Email id and the</p>
+      <p>mobile number as per the resume uploaded.</p>
+    </div>
+    <form action="{{url_for('login')}}" method="post">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="tel" name="phno" placeholder="phone number" maxlength="10" minlength="10" required >
+      <div class="link">
+        {% if msg is defined and msg %}
+        <span style="color:red;">{{msg}}</span><br/>
+        {% endif %}
+        <button type="submit" class="login">Login</button>
+        <!-- <a href="#" class="forgot">Forgot password?</a> -->
+      </div>
+      <hr>
+      <!-- <div class="button">
+        <a href="#">Create new account</a>
+      </div> -->
+    </form>
+  </div>
+</div>
+</body>
+</html> 
+

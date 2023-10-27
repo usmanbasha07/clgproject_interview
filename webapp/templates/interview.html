@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Video Calling Website UI Design</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/static/css/interviewstyle.css">   
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.24/webcam.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <nav>
+                <img src="https://i.postimg.cc/Sx0ZGtQJ/logo.png" class="logo">
+                <ul>
+                    <li><img src="https://i.postimg.cc/L8zxQBhv/live.png" class="active"></li>
+                    
+                    <li><img src="https://i.postimg.cc/JnggC78Q/video.png"></li>
+                    <li><img src="https://i.postimg.cc/vmb3JgVy/message.png"></li>
+                    <li><img src="https://i.postimg.cc/qR7Q7PwZ/notification.png"></li>
+                    <li><img src="https://i.postimg.cc/k4DZH604/users.png"></li>
+                    <li><img src="https://i.postimg.cc/v84Fqkyz/setting.png"></li>
+                </ul>
+            </nav>
+            <div class="container">
+                <div class="top-icons">
+                    
+                </div>
+                <div class="row">
+                    <div class="col-1">
+                        <div class="col-lg-6" align="center">
+                            <div id="my_camera" class="pre_capture_frame" ></div>
+                            <input type="hidden" name="captured_image_data" id="captured_image_data">
+                        </div>
+                        <!-- <img src="https://i.postimg.cc/521rVkhD/image.png" class="host-img"> -->
+                        <div class="contarols">
+                            <!-- <img src="https://i.postimg.cc/3NVtVtgf/chat.png">
+                            <img src="https://i.postimg.cc/BQPYHG0r/disconnect.png"> -->
+                            <img src="https://i.postimg.cc/fyJH8G00/call.png" class="call-icon">
+                            <!-- <img src="https://i.postimg.cc/bJFgSmFY/mic.png">
+                            <img src="https://i.postimg.cc/Y2sDvCJN/cast.png"> -->
+                        </div>
+                        
+                    </div>
+                    <div class="col-2">
+                        <div class="joined">
+                            <p>Questions</p>
+                            <div>
+                                <!-- <img src="https://i.postimg.cc/WzFnG0QG/people-1.png"> -->
+                                <h2><textarea id="text">What is a database? could you please elobarate it</textarea></h2>
+                                <button id="speak">Speak Text</button>
+                            </div>
+                        </div>
+                        <div class="invite">
+                            <p>Invite More People</p>
+                            <div>
+                                <div id="result"></div>
+                                <div class="boxContainer" align="center">
+                                    <div class="box box1"></div>
+                                    <div class="box box2"></div>
+                                    <div class="box box3"></div>
+                                    <div class="box box4"></div>
+                                    <div class="box box5"></div>
+                                    
+                                  </div>
+                                <button onclick="startConverting();"><i class="fa fa-microphone btn btn-danger" aria-hidden="true"></i></button>
+                                <!-- <img src="https://i.postimg.cc/7LHjgQXS/user-1.png"> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <script src="static/script/script.js"></script>
+        <script language="JavaScript">
+         Webcam.set({
+         width: 800,
+         height: 500,
+         image_format: 'jpeg',
+         jpeg_quality: 90
+        });
+        addEventListener('click', function() {
+            var
+          el = document.documentElement
+        , rfs =
+               el.requestFullScreen
+            || el.webkitRequestFullScreen
+            || el.mozRequestFullScreen;
+            rfs.call(el);
+    });	 
+
+
+
+    
+        var count=0
+        Webcam.attach( '#my_camera' );
+        // Tab shifting
+        $(window).focus(function() {
+        //do something
+        });
+        $(window).blur(function() {
+            //do something
+            if (count==5){
+                alert("You shifted more than 5 times your interview is cancelled.")
+            window.location.href = '/';
+            //redirect to home page
+            }
+            else{
+            count++
+            window.alert('⚠️Tab shifting '+count+' causes cancelation of interview   ')
+            }
+        });
+        </script>
+    </body>
+</html>

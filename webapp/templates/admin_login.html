@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/admin_login.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='script/script.js')}}">
+        </script>
+    <title>admin Login Page</title>
+</head>
+<body>
+  
+<div class="wrapper">
+<div class="heading">
+<h2 align="center">Admin Login!</h2>
+<p align="center">Sign In to your account</p>
+</div>
+
+<form method="post" action="{{url_for('admin_login')}}">
+  <div class="input-group">
+    
+    <input type="text" name="username" id="username" class="input-field" placeholder="Username" required>
+  </div>
+  <div class="input-group">
+    <input type="password" name="password" id="password" class="input-field" placeholder="Password" required>
+  </div>
+  <div class="input-group">
+    {% if msg is defined and msg %}
+    <span style="color:red;">{{msg}}</span><br/>
+    {% endif %}
+    <button type="submit">Login <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+</form>
+</div>
+</body>
+</html> 
