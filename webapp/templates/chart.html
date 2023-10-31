@@ -69,13 +69,13 @@
             
             
             <!-- Nav Item - Tables -->
-            <li class="nav-item active" >
+            <li class="nav-item " >
                 <a class="nav-link" href="">
                     <i class="fas fa-fw fa-tachometer-alt" ></i>
                     <span>Candidates Data </span></a>
                 </li>
                 <!-- Nav Item - Charts -->
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="">
                         <i class="fas fa-fw fa-chart-area"></i>
                         <span>Charts</span></a>
@@ -183,145 +183,25 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    <div class="accordion" id="accordionExample">
-                        <div class="accordion-item">
-                          <h2 class="accordion-header" id="headingThree">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                              Your job description
-                              <p>{{id}}</p>
-                            </button>
-                          </h2>
-                          <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                              <weak>{{desc.job_desc}}</weak>
-                            </div>
-                          </div>
-                        </div>
-                        </div><br/>
-                    <!-- Page Heading -->
-                    <!-- DataTales Example -->
+               
+                <div class="col-xl-12 col-lg-8">
+
+                    <!-- Bar Chart -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Candidates data and results</h6>
-                            <input type="button" value="Send Email for interview call" data-toggle="modal" data-target="#mailModal" class="btn btn-primary"> 
-
+                            <h6 class="m-0 font-weight-bold text-primary">Bar Chart</h6>
                         </div>
-                        <div align="center">
-                        {% with messages = get_flashed_messages() %}
-                          {% if messages %}
-                         {% for message in messages %}
-                        <div class="alert alert-success alert-solid" role="alert">{{ message }}</div>
-                         {% endfor %}
-                         {% endif %}
-                        {% endwith %}
-                    </div>
                         <div class="card-body">
-                            <form method="POST" action="/delete">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Select to<br>delete</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Mobile Number</th>
-                                            <th>Resume Score</th>
-                                            <th>Interview Score</th>
-                                           </tr>
-                                        </thead>
-                                  <tbody>
-                                    <tr>
-                                    {% for row in data %}
-                                    <td  id="{{row.ID}}" hidden>
-                                    <td><input type="checkbox" class="checkBoxClass" name="mycheckbox" value="{{row.ID}}" /></td>
-                                    <td>{{row.Name}}</td>
-                                    <td>{{row.Email_ID}}</td>
-                                    <td>{{row.mobile_number}}</td>
-                                    <td>{{row.resume_score}}</td>
-                                    <!-- <td>{{row.image}}</td> -->
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
+                            <div class="chart-bar"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                <canvas id="myBarChart" width="693" height="400" style="display: block; height: 320px; width: 555px;" class="chartjs-render-monitor"></canvas>
                             </div>
-                            <br/>
-                            <div>
-                            </form>
-                                <!-- Mail modal  -->
-                            
-                                <form  method="POST" action="/sendmail">           
-                                <div class="modal fade bd-example-modal-xl"   id="mailModal"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Send Email to shortlisted candidates</h5>
-                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">×</span>
-                                            </button>
-                                        </div><br/>
-                                        <div  class="container"  >
-                                            
-                                            <div class="form-group row">
-                                            <div class="col-sm-6 ">
-                                                <input type="text" class="form-control form-control-user" id="range" name="range"
-                                                    placeholder="Enter the cutoff resume score" required>
-                                            </div>
-                                            </div>
-                                    
-                                            <div class="form-group row">
-                                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                                    <input type="text" class="form-control form-control-user"
-                                                         name="jobtitle" placeholder="Enter Your Job title" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                                    <input type="text" class="form-control form-control-user"
-                                                         name="company" placeholder="Enter Your Company Name" required>
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                                    <input type="date" class="form-control form-control-user"
-                                                         name="date" placeholder="Enter the Interview date" required>
-                                                </div>
-                                            </div>         
-                                    </div>
-                                        <div class="modal-footer">
-                                            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Send</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>       
-                                                            
-                               <!-- delete modal  -->
-                           <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                               <div class="modal-dialog" role="document">
-                                   <div class="modal-content">
-                                       <div class="modal-header">
-                                           <h5 class="modal-title" id="exampleModalLabel">Are you sure do you want to delete?</h5>
-                                           <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                               <span aria-hidden="true">×</span>
-                                           </button>
-                                       </div>
-                       <!-- <div class="modal-body">It will delete permanently. </div> -->
-                       <div class="modal-footer">
-                           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                           <button class="btn btn-danger" type="submit">Delete</button>
-                       </div>
-                   </div>
-               </div>
-           </div> 
-                <input type="button" data-toggle="modal" data-target="#deleteModal" value="Delete Selected" class="btn btn-danger">  
-                </div>
-            </form>
-        </div>
-    </div>
+                            <hr>
+                            Styling for the bar chart can be found in the
+                            <code>/js/demo/chart-bar-demo.js</code> file.
+                        </div>
+                    </div>
 
                 </div>
-                <!-- /.container-fluid -->
 
             </div>
             <!-- End of Main Content -->
@@ -372,7 +252,9 @@
 <script src="{{ url_for('static', filename='assets1/js/sb-admin-2.min.js') }}"></script>
 <script src="{{ url_for('static', filename='assets1/vendor/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ url_for('static', filename='assets1/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='assets1/vendor/chart.js/Chart.min.js') }}"></script>
 <script src="{{ url_for('static', filename='assets1/js/demo/datatables-demo.js') }}"></script>
+<script src="{{ url_for('static', filename='assets1/js/demo/chart-bar-demo.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 
 </body>

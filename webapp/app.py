@@ -69,6 +69,27 @@ def user_data():
     #     return render_template('user_data.html', msg='No Data Found')
 
 
+@app.route('/user_data/chart')
+def chart():
+    # try:
+    #     if 'loggedin' in session and session['loggedin']:
+    #         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    #         ID = session['id']
+    #         UN = session['username']
+    #         cur.execute(f"SELECT job_desc FROM admin_data where id='{ID}'")
+    #         desc = cur.fetchone()
+    #         cur.execute(f"SELECT * FROM user_data WHERE admin = '{UN}' ORDER BY resume_score DESC;")
+    #         data = cur.fetchall()
+    #         return render_template('chart.html', data=data, desc=desc)
+    #     else:
+    #         return redirect(url_for('admin_login'))
+    # except Exception as e:
+    #     print(e)
+    # finally:
+    #     mysql.close()
+    return render_template('chart.html')
+
+
 @app.route('/delete', methods=['GET', 'POST'])
 def delete():
     cursor = mysql.connection.cursor()

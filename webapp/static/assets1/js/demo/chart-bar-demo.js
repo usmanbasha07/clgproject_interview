@@ -32,7 +32,7 @@ var ctx = document.getElementById("myBarChart");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: ["0-20","20-40","40-60","60-80","80-100"],
     datasets: [{
       label: "Revenue",
       backgroundColor: "#4e73df",
