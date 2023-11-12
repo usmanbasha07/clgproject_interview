@@ -67,24 +67,23 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
             
-            
-            <!-- Nav Item - Tables -->
+            <!-- Nav Item - Charts -->
             <li class="nav-item active" >
-                <a class="nav-link" href="">
+                <a class="nav-link" href="../user_data">
                     <i class="fas fa-fw fa-tachometer-alt" ></i>
-                    <span>Candidates Data </span></a>
+                    <span>Resume Score Data </span></a>
                 </li>
                 <!-- Nav Item - Charts -->
-                <li class="nav-item">
-                    <a class="nav-link" href="">
+                <li class="nav-item ">
+                    <a class="nav-link" href="user_data/chart">
                         <i class="fas fa-fw fa-chart-area"></i>
-                        <span>Charts</span></a>
+                        <span>Resume score Chart</span></a>
                     </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
-            </li> -->
+                <li class="nav-item ">
+                  <a class="nav-link" href="user_data/interview_result">
+                      <i class="fas fa-fw fa-table"></i>
+                      <span>Interview results</span></a>
+              </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -222,24 +221,24 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            
                                             <th>Select to<br>delete</th>
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile Number</th>
                                             <th>Resume Score</th>
-                                            <th>Interview Score</th>
                                            </tr>
                                         </thead>
                                   <tbody>
                                     <tr>
                                     {% for row in data %}
-                                    <td  id="{{row.ID}}" hidden>
+                                    <!-- <td  id="{{row.ID}}" hidden> -->
                                     <td><input type="checkbox" class="checkBoxClass" name="mycheckbox" value="{{row.ID}}" /></td>
                                     <td>{{row.Name}}</td>
                                     <td>{{row.Email_ID}}</td>
                                     <td>{{row.mobile_number}}</td>
                                     <td>{{row.resume_score}}</td>
-                                    <!-- <td>{{row.image}}</td> -->
+                                   
                                     </tr>
                                     {% endfor %}
                                     </tbody>
@@ -260,7 +259,7 @@
                                                 <span aria-hidden="true">×</span>
                                             </button>
                                         </div><br/>
-                                        <div  class="container"  >
+                                        <div  class="container" >
                                             
                                             <div class="form-group row">
                                             <div class="col-sm-6 ">

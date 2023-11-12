@@ -16,7 +16,6 @@
                 <img src="https://i.postimg.cc/Sx0ZGtQJ/logo.png" class="logo">
                 <ul>
                     <li><img src="https://i.postimg.cc/L8zxQBhv/live.png" class="active"></li>
-                    
                     <li><img src="https://i.postimg.cc/JnggC78Q/video.png"></li>
                     <li><img src="https://i.postimg.cc/vmb3JgVy/message.png"></li>
                     <li><img src="https://i.postimg.cc/qR7Q7PwZ/notification.png"></li>
@@ -38,6 +37,7 @@
                         <div class="contarols">
                             <!-- <img src="https://i.postimg.cc/3NVtVtgf/chat.png">
                             <img src="https://i.postimg.cc/BQPYHG0r/disconnect.png"> -->
+                            <button onclick="callPythonFunction()">Call Python Function</button>
                             <img src="https://i.postimg.cc/fyJH8G00/call.png" class="call-icon">
                             <!-- <img src="https://i.postimg.cc/bJFgSmFY/mic.png">
                             <img src="https://i.postimg.cc/Y2sDvCJN/cast.png"> -->
@@ -50,21 +50,13 @@
                             <div>
                                 <!-- <img src="https://i.postimg.cc/WzFnG0QG/people-1.png"> -->
                                 <h2><textarea id="text">What is a database? could you please elobarate it</textarea></h2>
-                                <button id="speak">Speak Text</button>
+                                <button id="speak" onclick="speakText()">Speak Text</button>
                             </div>
                         </div>
                         <div class="invite">
                             <p>Invite More People</p>
                             <div>
                                 <div id="result"></div>
-                                <div class="boxContainer" align="center">
-                                    <div class="box box1"></div>
-                                    <div class="box box2"></div>
-                                    <div class="box box3"></div>
-                                    <div class="box box4"></div>
-                                    <div class="box box5"></div>
-                                    
-                                  </div>
                                 <button onclick="startConverting();"><i class="fa fa-microphone btn btn-danger" aria-hidden="true"></i></button>
                                 <!-- <img src="https://i.postimg.cc/7LHjgQXS/user-1.png"> -->
                             </div>
@@ -91,27 +83,39 @@
             rfs.call(el);
     });	 
 
-
+    function speakText() {
+    var msg = new SpeechSynthesisUtterance();
+    var text = document.getElementById('text').value;
+    msg.text = text;
+    window.speechSynthesis.speak(msg);
+    }
 
     
         var count=0
         Webcam.attach( '#my_camera' );
         // Tab shifting
-        $(window).focus(function() {
-        //do something
-        });
-        $(window).blur(function() {
-            //do something
-            if (count==5){
-                alert("You shifted more than 5 times your interview is cancelled.")
-            window.location.href = '/';
-            //redirect to home page
-            }
-            else{
-            count++
-            window.alert('⚠️Tab shifting '+count+' causes cancelation of interview   ')
-            }
-        });
+        // $(window).focus(function() {
+        // //do something
+        // });
+        // $(window).blur(function() {
+        //     //do something
+        //     if (count==1){
+        //         alert("You shifted more than 5 times your interview is cancelled.")
+        //     window.location.href = '/feedback';
+        //     //redirect to home page
+        //     }
+        //     else{
+        //     count++
+        //     window.alert('⚠️Tab shifting '+count+' causes cancelation of interview   ')
+        //     }
+        // });
+
+        function callPythonFunction() {
+        fetch('/interview_monitor')
+        .then(response => response.text())
+        .then(text => console.log(text))
+        .catch(error => console.error(error));
+    }
         </script>
     </body>
 </html>

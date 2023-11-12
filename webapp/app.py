@@ -13,6 +13,7 @@ import base64
 from flask_mail import Mail, Message
 import cv2
 import face_recognition
+from interview import monitor
 
 app = Flask(__name__)
 app.secret_key = 'xyzsdfg'
@@ -55,7 +56,7 @@ def user_data():
             cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             ID = session['id']
             UN = session['username']
-            cur.execute(f"SELECT job_desc FROM admin_data where id='{ID}'")
+            cur.execute(f"SELECT job_desc,jobrole FROM admin_data where id='{ID}'")
             desc = cur.fetchone()
             cur.execute(f"SELECT * FROM user_data WHERE admin = '{UN}' ORDER BY resume_score DESC;")
             data = cur.fetchall()   
@@ -64,6 +65,7 @@ def user_data():
             return redirect(url_for('admin_login'))
     except Exception as e:
         print(e)
+        return redirect(url_for('admin_login'))
     # finally:
     #     mysql.close()
     #     return render_template('user_data.html', msg='No Data Found')
@@ -71,23 +73,53 @@ def user_data():
 
 @app.route('/user_data/chart')
 def chart():
-    # try:
-    #     if 'loggedin' in session and session['loggedin']:
-    #         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    #         ID = session['id']
-    #         UN = session['username']
-    #         cur.execute(f"SELECT job_desc FROM admin_data where id='{ID}'")
-    #         desc = cur.fetchone()
-    #         cur.execute(f"SELECT * FROM user_data WHERE admin = '{UN}' ORDER BY resume_score DESC;")
-    #         data = cur.fetchall()
-    #         return render_template('chart.html', data=data, desc=desc)
-    #     else:
-    #         return redirect(url_for('admin_login'))
-    # except Exception as e:
-    #     print(e)
-    # finally:
-    #     mysql.close()
+    try:
+        if 'loggedin' in session and session['loggedin']:
+            cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            ID = session['id']
+            UN = session['username']
+            cur.execute(f"SELECT job_desc FROM admin_data where id='{ID}'")
+            desc = cur.fetchone()
+            cur.execute(f"SELECT resume_score FROM user_data WHERE admin = '{UN}' ORDER BY resume_score DESC;")
+            data = cur.fetchall()
+            li=[0,0,0,0,0]
+            for i in data:
+                ans=i["resume_score"]
+                if ans>=0 and ans<=20:
+                    li[0]=li[0]+1
+                if ans>20 and ans<=40:
+                    li[1]=li[1]+1
+                if ans>40 and ans<=60:
+                    li[2]=li[2]+1
+                if ans>60 and ans<=80:
+                    li[3]=li[3]+1
+                if ans>80 and ans<=100:
+                    li[4]=li[4]+1                  
+            return render_template('chart.html', li=li,total=len(data))
+        else:
+            return redirect(url_for('admin_login'))
+    except Exception as e:
+        print(e)
     return render_template('chart.html')
+
+@app.route('/user_data/interview_result')
+def interview_result():
+    try:
+        if 'loggedin' in session and session['loggedin']:
+            msg = request.args.get('msg', None)
+            cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            ID = session['id']
+            UN = session['username']
+            cur.execute(f"SELECT job_desc,jobrole FROM admin_data where id='{ID}'")
+            desc = cur.fetchone()
+            cur.execute(f"SELECT * FROM user_data WHERE admin = '{UN}' and eligible = 1 ORDER BY interview_score DESC;")
+            data = cur.fetchall()   
+            return render_template('interview_result.html', data=data, desc=desc, msg=msg)
+        else:
+            return redirect(url_for('admin_login'))
+    except Exception as e:
+        print(e)
+        return redirect(url_for('admin_login'))
 
 
 @app.route('/delete', methods=['GET', 'POST'])
@@ -128,7 +160,7 @@ Dear Candidate,
 
 I am excited to inform you that you have been shortlisted for an AI online interview for the '''+request.form['jobtitle']+''' role at '''+request.form['company']+''' . We were very impressed with your resume and your qualifications, and we believe that you have the potential to be a valuable asset to our team.
 
-The AI online interview will be held on '''+request.form['date']+'''  via virtual interview. During the interview, you will be asked a series of questions about your skills, experience, and motivation for the role. You will also have the opportunity to ask questions about the role and the company.
+The AI online interview will be held on '''+request.form['date']+'''  via virtual interview.
 
 To prepare for the interview, please review the job description carefully and think about how your skills and experience match the requirements. You should also be prepared to answer questions about your skills and experience.
 
@@ -173,7 +205,7 @@ def login():
         email = request.form['email']
         phno = request.form['phno']
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM user_data WHERE Email_ID = % s AND mobile_number = % s', (email, phno))
+        cursor.execute('SELECT * FROM user_data WHERE Email_ID = % s AND mobile_number = % s', (email, phno)) 
         user = cursor.fetchone()
         if user and user['eligible']:
             session['loggedin'] = True
@@ -181,8 +213,10 @@ def login():
             session['Name'] = user['Name']
             session['Email_ID'] = user['Email_ID']
             session['mobile_number'] = user['mobile_number']
+            session['score']=user['interview_score']
             session['image']=user['image']
             msg = 'Logged in successfully !'
+            print("session['score']")
             return redirect(url_for('face_auth'))
         else:
             msg = 'Sorry you are not shortlisted for interview.'
@@ -234,12 +268,49 @@ def face_auth():
 def interview():
     try:
         if 'loggedin' in session and session['loggedin'] and session['face_auth']:
-            return render_template('interview.html', display_button=True)
+            if round(session['score'])==0:
+                print(round(session['score']))
+                return render_template('interview.html', display_button=True)
+            else:
+                session.pop('loggedin', None)
+                session.pop('id', None)
+                session.pop('Name',None)
+                session.pop('Email_ID',None)
+                session.pop('mobile_number',None)
+                session.pop('image',None)
+                return "your interview completed"
         else:
             return redirect(url_for('login'))
     except Exception as e:
         print(e)
-        return redirect(url_for('face_auth'))
+        return "eror"
+
+@app.route('/interview_monitor')
+def interview_monitor():
+    monitor()
+    return "Hello from interview_monitor!"
+
+@app.route('/feedback')
+def fedback():
+    cursor = mysql.connection.cursor()
+    mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    print(session['id'])
+    cursor.execute(f"UPDATE user_data set interview_score = 1 WHERE id={session['id']}")
+    mysql.connection.commit() 
+    cursor.execute(f"SELECT interview_score FROM user_data WHERE id={session['id']}")
+    status=cursor.fetchall()
+    # print(round(status[0][0]))
+    if round(status[0][0])!=0:
+        session.pop('loggedin', None)
+        session.pop('id', None)
+        session.pop('Name',None)
+        session.pop('Email_ID',None)
+        session.pop('mobile_number',None)
+        session.pop('image',None)
+        return "your interview completed"
+    else:
+        return render_template('face_auth.html')
+    
 
 if __name__=="__main__":
     app.run(debug=True)
