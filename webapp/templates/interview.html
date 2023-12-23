@@ -9,10 +9,19 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.24/webcam.js"></script>
+        <script language="JavaScript">
+            document.addEventListener("DOMContentLoaded", function() {
+                var msg = new SpeechSynthesisUtterance();
+                var text = "Hello, I am your interviewer. If you are ready, click on the start button to start the interview.";
+                msg.text = text;
+                window.speechSynthesis.speak(msg);
+            });
+        </script>
     </head>
+    
     <body>
         <div class="header">
-            <nav>
+            <!-- <nav>
                 <img src="https://i.postimg.cc/Sx0ZGtQJ/logo.png" class="logo">
                 <ul>
                     <li><img src="https://i.postimg.cc/L8zxQBhv/live.png" class="active"></li>
@@ -22,39 +31,41 @@
                     <li><img src="https://i.postimg.cc/k4DZH604/users.png"></li>
                     <li><img src="https://i.postimg.cc/v84Fqkyz/setting.png"></li>
                 </ul>
-            </nav>
+            </nav> -->
             <div class="container">
+                <p>Hello,{{name}}</p>
                 <div class="top-icons">
                     
                 </div>
                 <div class="row">
                     <div class="col-1">
                         <div class="col-lg-6" align="center">
-                            <div id="my_camera" class="pre_capture_frame" ></div>
+                            <!-- <div id="my_camera" class="pre_capture_frame" ></div> -->
                             <input type="hidden" name="captured_image_data" id="captured_image_data">
                         </div>
-                        <!-- <img src="https://i.postimg.cc/521rVkhD/image.png" class="host-img"> -->
+                        <img src="{{url_for('static', filename='quesvideo.gif')}}" class="host-img">
                         <div class="contarols">
                             <!-- <img src="https://i.postimg.cc/3NVtVtgf/chat.png">
                             <img src="https://i.postimg.cc/BQPYHG0r/disconnect.png"> -->
-                            <button onclick="callPythonFunction()">Call Python Function</button>
-                            <img src="https://i.postimg.cc/fyJH8G00/call.png" class="call-icon">
+                            <!-- <img src="https://i.postimg.cc/fyJH8G00/call.png" class="call-icon"> -->
                             <!-- <img src="https://i.postimg.cc/bJFgSmFY/mic.png">
-                            <img src="https://i.postimg.cc/Y2sDvCJN/cast.png"> -->
-                        </div>
-                        
+                                <img src="https://i.postimg.cc/Y2sDvCJN/cast.png"> -->
+                                <button id="speak" onclick="speakText()">Start</button>
+                            </div>
+                            <button onclick="callPythonFunction()">Call Python Function</button>
+                       
                     </div>
                     <div class="col-2">
                         <div class="joined">
                             <p>Questions</p>
                             <div>
                                 <!-- <img src="https://i.postimg.cc/WzFnG0QG/people-1.png"> -->
-                                <h2><textarea id="text">What is a database? could you please elobarate it</textarea></h2>
-                                <button id="speak" onclick="speakText()">Speak Text</button>
+                                <h2><p id="text">{{ques}}</p></h2>
                             </div>
                         </div>
+                        
                         <div class="invite">
-                            <p>Invite More People</p>
+                            <p>Your Answer</p>
                             <div>
                                 <div id="result"></div>
                                 <button onclick="startConverting();"><i class="fa fa-microphone btn btn-danger" aria-hidden="true"></i></button>
@@ -65,14 +76,14 @@
                 </div>  
             </div>
         </div>
-        <script src="static/script/script.js"></script>
-        <script language="JavaScript">
-         Webcam.set({
-         width: 800,
-         height: 500,
-         image_format: 'jpeg',
-         jpeg_quality: 90
-        });
+<script src="static/script/script.js"></script>
+<script language="JavaScript">
+    //      Webcam.set({
+    //      width: 800,
+    //      height: 500,
+    //      image_format: 'jpeg',
+    //      jpeg_quality: 90
+    //     });
         addEventListener('click', function() {
             var
           el = document.documentElement
@@ -82,17 +93,26 @@
             || el.mozRequestFullScreen;
             rfs.call(el);
     });	 
+    
+    
+        
 
     function speakText() {
     var msg = new SpeechSynthesisUtterance();
-    var text = document.getElementById('text').value;
+    var text = document.getElementById('text').innerHTML;
     msg.text = text;
     window.speechSynthesis.speak(msg);
+
+    var button = document.getElementById('speak');
+
+    if (button.innerHTML === "Start") {
+        button.innerHTML = "Next";
+}
     }
 
     
         var count=0
-        Webcam.attach( '#my_camera' );
+        // Webcam.attach( '#my_camera' );
         // Tab shifting
         // $(window).focus(function() {
         // //do something
@@ -117,5 +137,6 @@
         .catch(error => console.error(error));
     }
         </script>
+        
     </body>
 </html>

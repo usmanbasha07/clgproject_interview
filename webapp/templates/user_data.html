@@ -104,7 +104,15 @@
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <div class="card-header py-3">
+                        <input  type="button" value="Enter Job description" data-toggle="modal" data-target="#descModal"  class="btn btn-success"> 
 
+                    </div>
+                    <div class="card-header py-3">
+                        <input  type="button" value="Add Questions Sheet" data-toggle="modal" data-target="#quesModal"  class="btn btn-success"> 
+
+                    </div>
+                    
                     <!-- Sidebar Toggle (Topbar) -->
                     <form class="form-inline">
                         <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -113,8 +121,7 @@
                     </form>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <!-- <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
                                 aria-label="Search" aria-describedby="basic-addon2">
@@ -248,6 +255,64 @@
                             <br/>
                             <div>
                             </form>
+
+
+                                <!-- job description model -->
+
+                            <form  method="POST" action="/senddesc">           
+                                <div class="modal fade bd-example-modal-xl"   id="descModal"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Add Job description</h5>
+                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div><br/>
+                                        <div  class="container" >
+                                            <div class="form-group row">
+                                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                                    <input type="text" class="form-control form-control-user"
+                                                         name="jobname" placeholder="Enter Your Job title" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                    <textarea class="form-control form-control-user" id="jobdesc" name="jobdesc" placeholder="Enter job description" required rows="10" ></textarea>
+                                                </div>
+                                            </div>                                            
+                                    </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">ADD</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Que & ans model -->
+                        
+                        <form  method="POST" action="/sendques" >           
+                            <div class="modal fade bd-example-modal-xl"   id="quesModal"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Choose question & answers excel sheet </h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div><br/>
+                                    <div  class="container" >
+                                        <input type="file" name="upload" accept=".xlsx, .xls">
+                                      
+                                </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">ADD</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                                 <!-- Mail modal  -->
                             
                                 <form  method="POST" action="/sendmail">           

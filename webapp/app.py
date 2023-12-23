@@ -10,9 +10,11 @@ from json import JSONEncoder
 import smtplib
 import base64
 # import requests
+# pip install openpyxl
 from flask_mail import Mail, Message
 import cv2
 import face_recognition
+import pandas as pd
 from interview import monitor
 
 app = Flask(__name__)
@@ -40,7 +42,7 @@ def admin_login():
         user = cursor.fetchone()
         if user:
             session['loggedin'] = True
-            session['id'] = user['id']
+            session['admin_id'] = user['id']
             session['username'] = user['username']
             msg = 'Logged in successfully !'
             return redirect(url_for('user_data'))
@@ -184,6 +186,43 @@ further assistance, please contact us at 'helpsupport@gmail.com'
         flash('Error sending email: ' + str(e), 'danger')
         return redirect(url_for('user_data'))
 
+@app.route('/senddesc', methods=['GET', 'POST'])
+def senddesc():
+    try:
+        if request.method=='POST':
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(f"UPDATE admin_data SET job_desc='{request.form['jobdesc']}', jobrole='{request.form['jobname']}' WHERE id='{session['id']}'")
+            mysql.connection.commit()
+            flash('Job Description Updated Successfully!')
+            return redirect(url_for('user_data'))
+    except Exception as e:
+        flash('Error in Updating Job Description: ' + str(e), 'danger')
+        return redirect(url_for('user_data'))
+
+@app.route('/sendques', methods=['GET', 'POST'])
+def sendques():
+    try:
+        if request.method=='POST':
+            file=request.form['upload']
+            data=pd.read_excel(file, header=None)
+            data=data.to_dict()
+            ques=[]
+            ans=[]
+            for i in range(1,len(data[0])):
+                ques.append(data[0][i])
+                ans.append(data[1][i])
+            ques=json.dumps(ques)
+            ans=json.dumps(ans)
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(f"UPDATE admin_data SET questions='{ques}', answers='{ans}' WHERE id='{session['id']}'")
+            mysql.connection.commit()
+            flash("Questions and Answers Added to the Database")
+            return redirect(url_for('user_data'))
+    except Exception as e:
+        flash('Error in Updating Question: ' + str(e), 'danger')
+        return redirect(url_for('user_data'))
+            
+
 @app.route('/logout')
 def logout():
     session.pop('loggedin', None)
@@ -210,6 +249,7 @@ def login():
         if user and user['eligible']:
             session['loggedin'] = True
             session['id'] = user['ID']
+            session['admin'] = user['admin']
             session['Name'] = user['Name']
             session['Email_ID'] = user['Email_ID']
             session['mobile_number'] = user['mobile_number']
@@ -270,7 +310,13 @@ def interview():
         if 'loggedin' in session and session['loggedin'] and session['face_auth']:
             if round(session['score'])==0:
                 print(round(session['score']))
-                return render_template('interview.html', display_button=True)
+                owner=session['admin']
+                cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+                cursor.execute(f"SELECT questions, answers FROM admin_data WHERE username = '{owner}'")
+                ques = cursor.fetchone()
+                questions = json.loads(ques['questions'])
+                answers = json.loads(ques['answers'])
+                return render_template('interview.html', name=session['Name'], display_button=True, ques=questions[0], ans=answers)
             else:
                 session.pop('loggedin', None)
                 session.pop('id', None)
@@ -283,7 +329,7 @@ def interview():
             return redirect(url_for('login'))
     except Exception as e:
         print(e)
-        return "eror"
+        return "error"
 
 @app.route('/interview_monitor')
 def interview_monitor():
@@ -311,6 +357,9 @@ def fedback():
     else:
         return render_template('face_auth.html')
     
+
+
+
 
 if __name__=="__main__":
     app.run(debug=True)
