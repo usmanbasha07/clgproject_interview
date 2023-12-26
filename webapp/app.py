@@ -15,7 +15,8 @@ from flask_mail import Mail, Message
 import cv2
 import face_recognition
 import pandas as pd
-from interview import monitor
+from interview import facemonitor
+import random
 
 app = Flask(__name__)
 app.secret_key = 'xyzsdfg'
@@ -310,13 +311,35 @@ def interview():
         if 'loggedin' in session and session['loggedin'] and session['face_auth']:
             if round(session['score'])==0:
                 print(round(session['score']))
+                return render_template('interview.html', name=session['Name'],display_button=True)
+            else:
+                session.pop('loggedin', None)
+                session.pop('id', None)
+                session.pop('Name',None)
+                session.pop('Email_ID',None)
+                session.pop('mobile_number',None)
+                session.pop('image',None)
+                return "your interview completed"
+        else:
+            return redirect(url_for('login'))
+    except Exception as e:
+        print(e)
+        return "error"
+        
+@app.route('/interview/monitor')
+def monitor():
+    try:
+        if 'loggedin' in session and session['loggedin'] and session['face_auth']:
+            if round(session['score'])==0:
                 owner=session['admin']
                 cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
                 cursor.execute(f"SELECT questions, answers FROM admin_data WHERE username = '{owner}'")
                 ques = cursor.fetchone()
                 questions = json.loads(ques['questions'])
                 answers = json.loads(ques['answers'])
-                return render_template('interview.html', name=session['Name'], display_button=True, ques=questions[0], ans=answers)
+                numbers = random.sample(range(len(questions)), 5)
+                print(numbers)
+                return render_template('monitor.html', name=session['Name'], display_button=True, ques=questions[10], ans=answers)
             else:
                 session.pop('loggedin', None)
                 session.pop('id', None)
@@ -331,9 +354,10 @@ def interview():
         print(e)
         return "error"
 
+
 @app.route('/interview_monitor')
 def interview_monitor():
-    monitor()
+    facemonitor()
     return "Hello from interview_monitor!"
 
 @app.route('/feedback')

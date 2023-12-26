@@ -1,0 +1,151 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Video Calling Website UI Design</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- <link rel="stylesheet" href="/static/css/interviewstyle.css">  -->
+        <link href="{{ url_for('static', filename='css/interviewstyle.css') }}" rel="stylesheet">  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.24/webcam.js"></script>
+        <script language="JavaScript">
+            document.addEventListener("DOMContentLoaded", function() {
+                var
+          el = document.documentElement
+        , rfs =
+               el.requestFullScreen
+            || el.webkitRequestFullScreen
+            || el.mozRequestFullScreen;
+            rfs.call(el);
+            });
+        </script>
+    </head>
+    
+    <body onload="speakText()">
+        <div class="header">
+            <!-- <nav>
+                <img src="https://i.postimg.cc/Sx0ZGtQJ/logo.png" class="logo">
+                <ul>
+                    <li><img src="https://i.postimg.cc/L8zxQBhv/live.png" class="active"></li>
+                    <li><img src="https://i.postimg.cc/JnggC78Q/video.png"></li>
+                    <li><img src="https://i.postimg.cc/vmb3JgVy/message.png"></li>
+                    <li><img src="https://i.postimg.cc/qR7Q7PwZ/notification.png"></li>
+                    <li><img src="https://i.postimg.cc/k4DZH604/users.png"></li>
+                    <li><img src="https://i.postimg.cc/v84Fqkyz/setting.png"></li>
+                </ul>
+            </nav> -->
+            <div class="container">
+                <div class="top-icons">
+                    
+                </div>
+                <div class="row">
+                    <div class="col-1">
+                        <div class="col-lg-6" align="center">
+                            <h1 style="background-color:#182842;color:#fff; border-top-right-radius:20px;border-top-left-radius:20px;">Hello,{{name}}</h1>
+                            <!-- <div id="my_camera" class="pre_capture_frame" ></div> -->
+                            <input type="hidden" name="captured_image_data" id="captured_image_data">
+                        </div>
+                        <img src="{{url_for('static', filename='ansvideo.gif')}}" class="host-img">
+                        <div class="contarols">
+                            <!-- <img src="https://i.postimg.cc/3NVtVtgf/chat.png">
+                            <img src="https://i.postimg.cc/BQPYHG0r/disconnect.png"> -->
+                            <!-- <img src="https://i.postimg.cc/fyJH8G00/call.png"  onclick="speakText()" class="call-icon"> -->
+                            <!-- <img src="https://i.postimg.cc/bJFgSmFY/mic.png">
+                                <img src="https://i.postimg.cc/Y2sDvCJN/cast.png"> -->
+
+                                    <button type="submit"  id="speak" onclick="speakText()">Start</button>
+                            </div>
+
+                            <button onclick="callPythonFunction()">Call Python Function</button>
+                       
+                    </div>
+                    <div class="col-2">
+                        <div class="joined">
+                            <p>Questions</p>
+                            <div>
+                                <!-- <img src="https://i.postimg.cc/WzFnG0QG/people-1.png"> -->
+                                <h3><p id="text">{{ques}}</p></h3>
+                            </div>
+                        </div>
+                        
+                        <div class="invite" id="msg">
+                            <p>Your Answer</p>
+                            <div>
+                                <div class="joined" id="result"></div>
+                                <button onclick="startConverting();"><i class="fa fa-microphone btn btn-danger" aria-hidden="true"></i></button>
+                                <!-- <img src="https://i.postimg.cc/7LHjgQXS/user-1.png"> -->
+                            </div>
+                        </div><br>
+                        <button class="button">Next_Question</button>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        <script src="{{ url_for('static', filename='script/script.js') }}"></script>
+        <script language="JavaScript">
+    //      Webcam.set({
+    //      width: 800,
+    //      height: 500,
+    //      image_format: 'jpeg',
+    //      jpeg_quality: 90
+    //     });
+        addEventListener('click', function() {
+            var
+          el = document.documentElement
+        , rfs =
+               el.requestFullScreen
+            || el.webkitRequestFullScreen
+            || el.mozRequestFullScreen;
+            rfs.call(el);
+    });	 
+    
+    
+    // var element = document.getElementById("message-content");
+    // element.scrollTop = element.scrollHeight ;
+
+
+    function speakText() {
+    var msg = new SpeechSynthesisUtterance();
+    var text = document.getElementById('text').innerHTML;
+    msg.text = text;
+    window.speechSynthesis.speak(msg);
+
+    var button = document.getElementById('speak');
+    button.style.display = 'none';
+    
+    
+}
+
+    
+        var count=0
+        // Webcam.attach( '#my_camera' );
+        // Tab shifting
+        // $(window).focus(function() {
+        // //do something
+        // });
+        // $(window).blur(function() {
+        //     //do something
+        //     if (count==1){
+        //         alert("You shifted more than 5 times your interview is cancelled.")
+        //     window.location.href = '/feedback';
+        //     //redirect to home page
+        //     }
+        //     else{
+        //     count++
+        //     window.alert('⚠️Tab shifting '+count+' causes cancelation of interview   ')
+        //     }
+        // });
+        
+        function callPythonFunction() {
+        fetch('/interview_monitor')
+        .then(response => response.text())
+        .then(text => console.log(text))
+        .catch(error => console.error(error));
+    }
+        </script>
+        
+    </body>
+</html>

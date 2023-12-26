@@ -8,7 +8,7 @@ import time
 from imutils import face_utils
 from imutils.video import VideoStream
 from scipy.spatial import distance as dist
-def monitor():
+def facemonitor():
     def lip_distance(shape):
         top_lip = shape[50:53]
         top_lip = np.concatenate((top_lip, shape[61:64]))

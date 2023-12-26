@@ -114,7 +114,19 @@ nav ul li img:hover{
   border-radius: 15px;
   padding: 30px 40px 50px;
   color: #fff;
+  overflow-y: auto;
 
+}
+.joined::-webkit-scrollbar {
+  width: 6px;
+}
+.joined::-webkit-scrollbar-track {
+  background: #ddd;
+  border-radius:20px;
+}
+.joined::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius:20px;
 }
 .joined div{
   margin-top: 20px;
@@ -135,6 +147,7 @@ nav ul li img:hover{
   padding: 30px 40px 50px;
   color: #fff;
   margin-top: 20px;
+
 
 }
 .invite img{
@@ -182,14 +195,14 @@ nav ul li img:hover{
     transform: scaleY(1.2);
   }
 }
-/* body{
+body{
   display: flex;
   justify-content: center;
   background: black;
   margin: 0;padding: 0;
   align-items: center;
   height: 100vh;
-} */
+}
 
 .boxContainer{
   display: flex;
@@ -235,9 +248,7 @@ nav ul li img:hover{
 
 
 
-body{
-  font-family: Open Sans;
-}
+
 #result{
   height: 200px;
   border: 1px solid #ccc;
@@ -246,14 +257,36 @@ body{
   margin-bottom: 30px;
   font-size: 14px;
   line-height: 25px;
-}
-button{
-  font-size: 20px;
-  position: absolute;
-  
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  scroll-margin-top: 100%;
 }
 
 
+
+
+.button {
+  display: inline-block;
+  padding: 15px 200px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4154f1;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #4154f1}
+
+.button:active {
+  background-color: #4154f1;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
 
 /* text to speech */
 #text {
