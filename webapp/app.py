@@ -43,7 +43,7 @@ def admin_login():
         user = cursor.fetchone()
         if user:
             session['loggedin'] = True
-            session['admin_id'] = user['id']
+            session['id'] = user['id']
             session['username'] = user['username']
             msg = 'Logged in successfully !'
             return redirect(url_for('user_data'))
