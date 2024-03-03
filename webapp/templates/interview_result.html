@@ -81,7 +81,7 @@
                         <span>Resume score Chart</span></a>
                     </li>
                 <li class="nav-item active">
-                  <a class="nav-link" href="user_data/interview_result">
+                  <a class="nav-link" href="interview_result">
                       <i class="fas fa-fw fa-table"></i>
                       <span>Interview results</span></a>
               </li>
@@ -225,7 +225,7 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Mobile Number</th>
-                                            <!-- <th>Skills</th> -->
+                                            <th>Interview Attended</th>
                                             <th>InterviewScore</th>
                                             
                                            </tr>
@@ -238,6 +238,11 @@
                                     <td>{{row.Name}}</td>
                                     <td>{{row.Email_ID}}</td>
                                     <td>{{row.mobile_number}}</td>
+                                    {% if row.interview_status == 1 %}
+                                    <td style="color:rgb(10, 203, 10)">Attended</td>
+                                    {% else %}
+                                    <td style="color:red">Not Attended</td>
+                                    {% endif %}                                    
                                     <td>{{row.interview_score}}</td>
                                     </tr>
                                     {% endfor %}
@@ -249,7 +254,7 @@
                             </form>
                                 <!-- Mail modal  -->
                             
-                                <form  method="POST" action="/sendmail">           
+                                <form  method="POST" action="/interviewmail">           
                                 <div class="modal fade bd-example-modal-xl"   id="mailModal"  tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
@@ -264,7 +269,7 @@
                                             <div class="form-group row">
                                             <div class="col-sm-6 ">
                                                 <input type="text" class="form-control form-control-user" id="range" name="range"
-                                                    placeholder="Enter the cutoff resume score" required>
+                                                    placeholder="Enter the cutoff interview score" required>
                                             </div>
                                             </div>
                                     
@@ -285,7 +290,7 @@
                                                     <input type="date" class="form-control form-control-user"
                                                          name="date" placeholder="Enter the Interview date" required>
                                                 </div>
-                                            </div>         
+                                            </div>
                                     </div>
                                         <div class="modal-footer">
                                             <button type="submit" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Send</button>

@@ -13,11 +13,17 @@
 <div class="container flex">
   <div class="facebook-page flex">
     <div class="text">
-        <h1><u>Login</u></h1>
+        <h1>Interview Login</h1>
       <p>Enter your Email id and the</p>
       <p>mobile number as per the resume uploaded.</p>
     </div>
     <form action="{{url_for('login')}}" method="post">
+      <select name="company" required>
+        <option value="" selected disabled>Select your company</option>
+          {% for item in company %}
+            <option value="{{item.username}}">{{item.username}}</option>
+          {% endfor %}
+      </select><br/>    
       <input type="email" name="email" placeholder="Email" required>
       <input type="tel" name="phno" placeholder="phone number" maxlength="10" minlength="10" required >
       <div class="link">

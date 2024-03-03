@@ -1,6 +1,5 @@
 
 var result = document.getElementById('result');
-  
 function startConverting () {
 
 if('webkitSpeechRecognition' in window) {
@@ -9,7 +8,7 @@ if('webkitSpeechRecognition' in window) {
     speechRecognizer.interimResults = true;
     speechRecognizer.lang = 'en-US';
     speechRecognizer.start();
-
+    document.getElementById("mic").style.display = "block";
     var finalTranscripts = '';
 
     speechRecognizer.onresult = function(event) {
@@ -32,25 +31,32 @@ if('webkitSpeechRecognition' in window) {
     result.innerHTML = 'Your browser is not supported. Please download Google chrome or Update your Google chrome!!';
 }	
 }
-
-
-// grab the UI elements to work with
-const textEl = document.getElementById('text');
-const speakEl = document.getElementById('speak');
-
-// click handler
-speakE2.addEventListener('click', speakText);
-
-function speakText() {
-  // stop any speaking in progress
-  window.speechSynthesis.cancel();
-
-  // speak text
-  const text = textEl.value();
-  const utterance = new SpeechSynthesisUtterance(text);
-  window.speechSynthesis.speak(utterance);
+stopConverting = function(){
+    var speechRecognizer = new webkitSpeechRecognition();
+    speechRecognizer.continuous = true;
+    speechRecognizer.interimResults = true;
+    speechRecognizer.lang = 'en-US';
+    speechRecognizer.stop();
+    document.getElementById("mic").style.display = "none";
 }
 
+
+// // grab the UI elements to work with
+// const textEl = document.getElementById('text');
+// const speakEl = document.getElementById('speak');
+
+// // click handler
+// speakE2.addEventListener('click', speakText);
+
+// function speakText() {
+//   // stop any speaking in progress
+//   window.speechSynthesis.cancel();
+  
+//   // speak text
+//   const text = textEl.value();
+//   const utterance = new SpeechSynthesisUtterance(text);
+//   window.speechSynthesis.speak(utterance);
+// }
 
 
 // user_data script

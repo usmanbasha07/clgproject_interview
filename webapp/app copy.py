@@ -1,4 +1,3 @@
-import secrets
 from flask import Flask,flash, render_template, request, jsonify,Response,redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -15,20 +14,11 @@ import base64
 from flask_mail import Mail, Message
 import cv2
 import face_recognition
-import setuptools
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 from interview import facemonitor
 import random
-
-import dlib
-import math
-import imutils
-import time
-from imutils import face_utils
-from imutils.video import VideoStream
-from scipy.spatial import distance as dist
 
 app = Flask(__name__)
 app.secret_key = 'xyzsdfg'
@@ -155,9 +145,9 @@ def sendmail():
     try:
         if request.method=='POST':
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE resume_score >= '{request.form['range']}' and admin='{session['admin']}'")
+            cursor.execute(f"SELECT Email_ID FROM user_data WHERE resume_score >= '{request.form['range']}'")
             data = cursor.fetchall()
-            cursor.execute(f"UPDATE user_data SET eligible='1' WHERE resume_score >= '{request.form['range']}'and admin='{session['admin']}'")
+            cursor.execute(f"UPDATE user_data SET eligible='1' WHERE resume_score >= '{request.form['range']}'")
             mysql.connection.commit()
             li=[]
             for i in range(len(data)):
@@ -198,87 +188,6 @@ further assistance, please contact us at 'helpsupport@gmail.com'
     except Exception as e:
         flash('Error sending email: ' + str(e), 'danger')
         return redirect(url_for('user_data'))
-
-
-
-
-
-@app.route('/interviewmail',methods=['GET','POST'])
-def interviewmail():
-    try:
-        if request.method=='POST':
-            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score >= '{request.form['range']}' and admin='{session['admin']} and eligible=1'")
-            data = cursor.fetchall()
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score < '{request.form['range']}'and admin='{session['admin']} and eligible=1'")
-            regretdata = cursor.fetchall()
-            # cursor.execute(f"UPDATE user_data SET eligible='1' WHERE resume_score >= '{request.form['range']}'")
-            # mysql.connection.commit()
-            li=[]
-            rli=[]
-            for i in range(len(data)):
-                li.append(data[i]['Email_ID'])
-            for i in range(len(regretdata)):
-                rli.append(regretdata[i]['Email_ID'])
-            
-            app.config['MAIL_SERVER'] = 'smtp.hostinger.com'
-            app.config['MAIL_PORT'] = 587
-            app.config['MAIL_USERNAME'] ='recruiter@hackerbucket.com'
-            app.config['MAIL_PASSWORD'] = 'Sad@dm1n'
-            app.config['MAIL_USE_TLS'] = True
-            app.config['MAIL_USE_SSL'] = False
-            mail = Mail(app)
-
-            msg = Message(subject='''Congratulations! You've been selected in AI online interview for '''+request.form['jobtitle']+''' at '''+request.form['company']+'''.''', sender='recruiter@hackerbucket.com', recipients=li)
-            msg.body = '''
-Dear Candidate,
-
-I am excited to inform you that you have been Selected for an AI online interview for the '''+request.form['jobtitle']+''' role at '''+request.form['company']+''' .
-
-The Face to Face HR interview At the  '''+request.form['company']+''' office on '''+request.form['date']+'''.
-
-We look forward to meeting you soon!
-
-Sincerely,
-AI Recruiter
-'''+request.form['company']+''' 
-
-
-Please note that this email is an automated message and does not require a response. If there are any issues with your account or if you need
-further assistance, please contact us at 'helpsupport@gmail.com'
-'''
-
-            rmsg = Message(subject='''Regretfully, you have not been selected for the '''+request.form['jobtitle']+''' position at '''+request.form['company']+'''.''', sender='recruiter@hackerbucket.com', recipients=rli)
-            rmsg.body = '''
-Dear Candidate,
-
-We appreciate the effort and enthusiasm you have shown towards '''+request.form['company']+'''.
-
-After careful consideration, we regret to inform you that we will not be moving forward with your profile.
-
-
-We wish you the very best for your future endeavors and hope that our paths cross again.
-
-Sincerely,
-AI Recruiter
-'''+request.form['company']+''' 
-
-
-Please note that this email is an automated message and does not require a response. If there are any issues with your account or if you need
-further assistance, please contact us at 'helpsupport@gmail.com'
-'''
-            # print(msg.body )
-            
-            mail.send(msg)
-            mail.send(rmsg)
-            flash('Email sent successfully!')
-            return redirect(url_for('interview_result'))
-    except Exception as e:
-        flash('Error sending email: ' + str(e), 'danger')
-        return redirect(url_for('interview_result'))
-    
-
-
 
 @app.route('/senddesc', methods=['GET', 'POST'])
 def senddesc():
@@ -442,7 +351,7 @@ def monitor():
                 session['interview_status']=1
                 # update it in database
                 cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-                cursor.execute(f"UPDATE user_data set interview_status = '0' WHERE id='{session['user_id']}'")
+                cursor.execute(f"UPDATE user_data set interview_status = '1' WHERE id='{session['user_id']}'")
                 mysql.connection.commit()
 
                 return render_template('monitor.html', name=session['Name'], ques_id=numbers[0], display_button=True,len=length,ques=questions[numbers[0]], ans=answers[numbers[0]])
@@ -488,7 +397,6 @@ def evaluate():
                     count_matrix = cv.fit_transform(content)
                     mat = cosine_similarity(count_matrix)
                     currscore=round((mat[1][0]*100),2)
-                    currscore=(currscore*20)//100
                     # Answer comparision code goes here
 
                     # cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -511,161 +419,10 @@ def evaluate():
 
 
 
-# @app.route('/interview_monitor')
-# def interview_monitor():
-#     facemonitor(session['image'],session['Name'])
-#     return "hello monitor"
-
-
-def gen_frames(face,name):
-    camera = cv2.VideoCapture(0)
-    def lip_distance(shape):
-        top_lip = shape[50:53]
-        top_lip = np.concatenate((top_lip, shape[61:64]))
-
-        low_lip = shape[56:59]
-        low_lip = np.concatenate((low_lip, shape[65:68]))
-
-        top_mean = np.mean(top_lip, axis=0)
-        low_mean = np.mean(low_lip, axis=0)
-
-        distance = abs(top_mean[1] - low_mean[1])
-        return distance
-
-    # Load the Haar cascade for face detection
-    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
-    # Load the Haar cascade for eye detection
-    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
-
-    # Load the shape predictor for lip detection
-    predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
-
-    # Start the webcam
-    # cap = VideoStream(src=0).start()
-    # time.sleep(2)
-    frame_counter=0
-    LIP_OPEN_THRESH = 20
-    LIP_CLOSE_THRESH = 20
-    lip_motion_count = 0
-    lip_motion = False
-    warning=0 
-    result=False 
-    while True:
-        try:
-            success, frame = camera.read()  # read the camera frame
-            if not success:
-                print("error in camera")
-                break
-            else:
-                frame = imutils.resize(frame, width=450)
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-            # Detect faces in the grayscale frame
-            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-
-            # Calculate the center of the camera frame
-            camera_center_x = frame.shape[1] // 2
-            camera_center_y = frame.shape[0] // 2
-
-            # Initialize the minimum distance and selected eye position
-            min_distance = float('inf')
-            selected_eye_position = None
-
-            # For each face, detect eyes and calculate the distance between the center of the camera frame and the center of each eye
-            for (x,y,w,h) in faces:
-                rect = dlib.rectangle(int(x), int(y), int(x + w),int(y + h))
-                shape = predictor(gray, rect)
-                shape = face_utils.shape_to_np(shape)
-
-                distance = lip_distance(shape)
-                lip = shape[48:60]
-                cv2.drawContours(frame, [lip], -1, (0, 255, 0), 1)
-
-                if distance > LIP_OPEN_THRESH and not lip_motion:
-                    lip_motion = True
-                    lip_motion_count += 1
-                elif distance < LIP_CLOSE_THRESH and lip_motion:
-                    lip_motion = False
-
-                roi_gray = gray[y:y+h, x:x+w]
-                roi_color = frame[y:y+h, x:x+w]
-                eyes = eye_cascade.detectMultiScale(roi_gray)
-                for (ex,ey,ew,eh) in eyes:
-                    pupil_x = x + ex + ew // 2
-                    pupil_y = y + ey + eh // 2
-                    distance = math.sqrt((pupil_x - camera_center_x)**2 + (pupil_y - camera_center_y)**2)
-                    if distance < min_distance:
-                        min_distance = distance
-                        selected_eye_position = (pupil_x, pupil_y)
-                    cv2.circle(roi_color, (pupil_x, pupil_y), 3, (255, 0, 0), -1)
-
-            if selected_eye_position is not None:
-                warning=0
-                cv2.circle(frame, selected_eye_position, 3, (0, 255, 0), -1)
-                cv2.putText(frame, "seeing camera", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            else:
-                warning+=1
-                if warning>70:
-                    print("\rwarning", end='')
-                    cv2.putText(frame, "Warning", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    
-            cv2.putText(frame, "LIP MOTION COUNT: {}".format(lip_motion_count), (10, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            if lip_motion:
-                cv2.putText(frame, "LIP MOTION: 1", (10, 90),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            else:
-                cv2.putText(frame, "LIP MOTION: 0", (10, 90),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-            faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-
-            for (x, y, w, h) in faces:
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-            frame_counter += 1
-            # Call facerecog function after every 70 frames
-            try:
-                if frame_counter == 70:
-                    ##############################
-                    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    encode_img = face_recognition.face_encodings(img)
-                    if len(encode_img) > 0:  # Ensure at least one face was found
-                        encode_img = encode_img[0]
-
-                        # Load the image from the session
-                        decodedArrays = json.loads(face)
-                        dbface = np.asarray(decodedArrays["array"])
-
-                        # Compare faces
-                        result = face_recognition.compare_faces([encode_img], dbface)
-                        result=result[0]
-                    ##############################
-                    if result:
-                        print("\r"+name, end='')
-                        cv2.putText(frame, name, (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-                    else:
-                        print("\rUnknown Person", end='')
-                        cv2.putText(frame, "Unknown Person", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    frame_counter = 0 
-            except Exception as e:
-                print(e)  
-            
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
-        except GeneratorExit:
-            # The client has disconnected, so stop the camera
-            camera.release()
-            break
-        except Exception as e:
-            print(e)
-
 @app.route('/interview_monitor')
 def interview_monitor():
-    return Response(gen_frames(session['image'],session['Name']), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+    facemonitor()
+    return "Hello from interview_monitor!"
 
 
 @app.route('/feedback')
@@ -689,11 +446,11 @@ def feedback():
         session.pop('score',None)
         return render_template('feedback.html')
     else:
-        return render_template('index.html')
+        return render_template('login.html')
+    
 
 
 
 
 if __name__=="__main__":
-    # app.run(debug=True,host= '192.168.134.227')
-    app.run(debug=True,host= 'localhost')
+    app.run(debug=True)

@@ -32,7 +32,7 @@
                             <h1 style="background-color:#182842;color:#fff; border-top-right-radius:20px;border-top-left-radius:20px;">Hello,{{name}}</h1>
                             <input type="hidden" name="captured_image_data" id="captured_image_data">
                         </div>
-                        <img src="{{url_for('static', filename='quesvideo.gif')}}" class="host-img">
+                        <img id="gif"src="{{url_for('static', filename='quesvideo.gif')}}" class="host-img">
                         <div class="contarols">
                                     
                                 </div>                       
@@ -62,8 +62,9 @@
     }
     setTimeout(function() {
         document.getElementById('startButton').disabled = false;
-        document.getElementById("startButton").onclick = callPythonFunction;
-        
+        // document.getElementById("startButton").onclick = callPythonFunction;
+        document.getElementById('gif').src = "{{url_for('static', filename='ansvideo.gif')}}";
+
     }, 6000);
         </script>
         

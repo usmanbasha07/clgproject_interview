@@ -8,7 +8,12 @@ import time
 from imutils import face_utils
 from imutils.video import VideoStream
 from scipy.spatial import distance as dist
-def facemonitor():
+import face_recognition
+import json 
+from json import JSONEncoder
+frame_counter = 0
+def facemonitor(face,name):
+    global frame_counter
     def lip_distance(shape):
         top_lip = shape[50:53]
         top_lip = np.concatenate((top_lip, shape[61:64]))
@@ -105,7 +110,7 @@ def facemonitor():
             if warning>100:
                 print("\rwarning", end='')
                 cv2.putText(frame, "Warning", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
+                
         cv2.putText(frame, "LIP MOTION COUNT: {}".format(lip_motion_count), (10, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
         if lip_motion:
@@ -114,13 +119,45 @@ def facemonitor():
         else:
             cv2.putText(frame, "LIP MOTION: 0", (10, 90),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
+        # Draw a rectangle around the faces
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        frame_counter += 1
+        # Call facerecog function after every 70 frames
+        if frame_counter == 70:
+            result = facerecog(face)
+            if result:
+                print("\r"+name, end='')
+                cv2.putText(frame, name, (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            else:
+                print("\rUnknown Person", end='')
+                cv2.putText(frame, "Unknown Person", (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            frame_counter = 0        
+      
         cv2.imshow('frame',frame)
 
         # Exit the loop if the 'q' key is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+    
+        def facerecog(face):
+              # Convert the frame to RGB
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+            # Encode the image
+            encode_img = face_recognition.face_encodings(img)
+            if len(encode_img) > 0:  # Ensure at least one face was found
+                encode_img = encode_img[0]
+
+                # Load the image from the session
+                decodedArrays = json.loads(face)
+                dbface = np.asarray(decodedArrays["array"])
+
+                # Compare faces
+                result = face_recognition.compare_faces([encode_img], dbface)
+                return result[0]
     # Release the webcam and close the window
     cap.stop()
     cv2.destroyAllWindows()
