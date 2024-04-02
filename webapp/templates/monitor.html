@@ -119,21 +119,21 @@
         var count=0
         // Webcam.attach( '#my_camera' );
         // Tab shifting
-        // $(window).focus(function() {
-        // //do something
-        // });
-        // $(window).blur(function() {
-        //     //do something
-        //     if (count==3){
-        //         alert("You shifted more than 3 times your interview is cancelled.")
-        //     window.location.href = '/feedback';
-        //     //redirect to home page
-        //     }
-        //     else{
-        //     count++
-        //     window.alert('⚠️Tab shifted:'+count+' times.Causes cancelation of interview!')
-        //     }
-        // });
+        $(window).focus(function() {
+        //do something
+        });
+        $(window).blur(function() {
+            //do something
+            if (count==3){
+                alert("You shifted more than 3 times your interview is cancelled.")
+            window.location.href = '/feedback';
+            //redirect to home page
+            }
+            else{
+            count++
+            window.alert('⚠️Tab shifted:'+count+' times.Causes cancelation of interview!')
+            }
+        });
         
         setTimeout(function() {
             document.getElementById('gif').src = "{{url_for('static', filename='ansvideo.gif')}}";

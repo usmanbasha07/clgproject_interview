@@ -442,7 +442,7 @@ def monitor():
                 session['interview_status']=1
                 # update it in database
                 cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-                cursor.execute(f"UPDATE user_data set interview_status = '0' WHERE id='{session['user_id']}'")
+                cursor.execute(f"UPDATE user_data set interview_status = '1' WHERE id='{session['user_id']}'")
                 mysql.connection.commit()
 
                 return render_template('monitor.html', name=session['Name'], ques_id=numbers[0], display_button=True,len=length,ques=questions[numbers[0]], ans=answers[numbers[0]])
