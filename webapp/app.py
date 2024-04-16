@@ -155,9 +155,9 @@ def sendmail():
     try:
         if request.method=='POST':
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE resume_score >= '{request.form['range']}' and admin='{session['admin']}'")
+            cursor.execute(f"SELECT Email_ID FROM user_data WHERE resume_score >= '{request.form['range']}' and admin='{session['username']}'")
             data = cursor.fetchall()
-            cursor.execute(f"UPDATE user_data SET eligible='1' WHERE resume_score >= '{request.form['range']}'and admin='{session['admin']}'")
+            cursor.execute(f"UPDATE user_data SET eligible= 1 WHERE resume_score >= '{request.form['range']}'and admin='{session['username']}'")
             mysql.connection.commit()
             li=[]
             for i in range(len(data)):
@@ -208,9 +208,9 @@ def interviewmail():
     try:
         if request.method=='POST':
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score >= '{request.form['range']}' and admin='{session['admin']} and eligible=1'")
+            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score >= '{request.form['range']}' and admin='{session['username']}' and eligible=1")
             data = cursor.fetchall()
-            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score < '{request.form['range']}'and admin='{session['admin']} and eligible=1'")
+            cursor.execute(f"SELECT Email_ID FROM user_data WHERE interview_score < '{request.form['range']}'and admin='{session['username']}' and eligible=1")
             regretdata = cursor.fetchall()
             # cursor.execute(f"UPDATE user_data SET eligible='1' WHERE resume_score >= '{request.form['range']}'")
             # mysql.connection.commit()
@@ -696,4 +696,4 @@ def feedback():
 
 if __name__=="__main__":
     # app.run(debug=True,host= '192.168.134.227')
-    app.run(debug=True,host= 'localhost')
+    app.run(debug=True,host='localhost')
